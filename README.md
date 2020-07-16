@@ -11,6 +11,12 @@ multifingered robotic hands. Our model produces over 90% valid contact points in
 anthropomorphic robotic hands.
 
 ## Get Started
+1.Initialize repository
+```git clone https://github.com/stanford-iprl-lab/UniGrasp.git```
+2.Compile pointnet++
+```cd models/poinetnet4```
+The TF operators are included under tf_ops, you need to compile them (check tf_xxx_compile.sh under each ops subfolder) first.
+3.Run
 ```cd models; python point_set_selection.py```
 
 
