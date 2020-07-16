@@ -11,4 +11,4 @@ multifingered robotic hands. Our model produces over 90% valid contact points in
 anthropomorphic robotic hands.
 
 ## Run the code
-```cd python point_set_selection.py```
+```cd models; python point_set_selection.py```
