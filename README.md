@@ -9,3 +9,6 @@ multifingered robotic hands. Our model produces over 90% valid contact points in
 90% successful grasps in real world experiments for various known two-fingered and three-fingered grippers. Our model also achieves
 93%, 83% and 90% successful grasps in real world experiments for an unseen two-fingered gripper and two unseen multi-fingered
 anthropomorphic robotic hands.
+
+## Run the code
+```cd python point_set_selection.py```
