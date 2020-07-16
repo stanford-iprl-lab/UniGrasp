@@ -21,7 +21,7 @@ git clone https://github.com/stanford-iprl-lab/UniGrasp.git
 cd models/poinetnet4
 ```
 
-The TF operators are included under tf_ops, you need to compile them (check tf_xxx_compile.sh under each ops subfolder) first.
+The TF operators are included under tf_ops, you need to compile them (run tf_xxx_compile.sh under each ops subfolder).
 
 3.Run
 ```
