@@ -10,5 +10,21 @@ multifingered robotic hands. Our model produces over 90% valid contact points in
 93%, 83% and 90% successful grasps in real world experiments for an unseen two-fingered gripper and two unseen multi-fingered
 anthropomorphic robotic hands.
 
-## Run the code
+## Get Started
 ```cd models; python point_set_selection.py```
+
+
+If you think our work is useful, please consider citing use with
+```
+@ARTICLE{8972562,
+author={L. {Shao} and F. {Ferreira} and M. {Jorda} and V. {Nambiar} and J. {Luo} and E. {Solowjow} and J. A. {Ojea} and O. {Khatib} and J. {Bohg}},
+journal={IEEE Robotics and Automation Letters},
+title={UniGrasp: Learning a Unified Model to Grasp With Multifingered Robotic Hands},
+year={2020},
+volume={5},
+number={2},
+pages={2286-2293},
+doi={10.1109/LRA.2020.2969946},
+ISSN={2377-3774},
+month={April},}
+```
