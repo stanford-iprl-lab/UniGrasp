@@ -1,0 +1,256 @@
+<?xml version="1.0"?>
+<robot name="robotiq_3f">
+  <link name="base_link">
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="file:///home/lins/MetaGrasp/grippers/meshes/robotiq_3f/coupling.obj"/>
+      </geometry>
+    </visual>
+  </link>
+
+  <joint name="couling_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="palm"/>
+    <!--origin rpy="1.57079632679 1.57079632679 1.57079632679" xyz="0.04 0.07 0.04"/--> 
+    <origin rpy="1.57079632679 0 0" xyz="0 0 0.07"/>
+  </joint>
+
+  <!-- Link palm-->
+  <link name="palm">
+    <visual>
+      <geometry> 
+        <mesh filename="file:///home/lins/MetaGrasp/grippers/meshes/robotiq_3f/palm.obj"/>
+      </geometry>
+    </visual>
+  </link>
+
+  <joint name="palm_finger_1_joint" type="revolute">
+    <parent link="palm"/>
+    <child link="finger_1_link_0"/>
+    <dynamics damping="1" frictio="0"/>
+    <axis xyz="0 1 0"/>
+    <origin rpy="0 3.1416 -1.57" xyz="-0.0455 0.0214 0.036"/>
+    <!--limit effort="60" lower="-0.2967" upper="0.2967" velocity="-1"/-->
+    <limit effort="60" lower="-0.21" upper="0.2967" velocity="-1"/>
+  </joint>
+
+  <joint name="palm_finger_2_joint" type="revolute">
+    <parent link="palm"/>
+    <child link="finger_2_link_0"/>
+    <axis xyz="0 1 0"/>
+    <origin rpy="0 3.1416 -1.57" xyz="-0.0455 0.0214 -0.036"/>
+    <!--limit effort="60" lower="-0.2967" upper="0.2967" velocity="-1"/-->
+    <limit effort="60" lower="-0.2967" upper="0.21" velocity="-1"/>
+  </joint>
+
+  <joint name="palm_finger_middle_joint" type="fixed">
+    <parent link="palm"/>
+    <child link="finger_middle_link_0"/>
+    <dynamics damping="1" friction="0"/>
+    <axis xyz="0 1 0"/>
+    <origin rpy="0 0 1.57" xyz="0.0455 0.0214 0"/>
+    <limit effort="60" lower="0" upper="0" velocity="-1"/>
+  </joint>
+
+
+  <link name="finger_1_link_0">
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="file:///home/lins/MetaGrasp/grippers/meshes/robotiq_3f/link_0.obj"/>
+      </geometry>
+    </visual>
+  </link>
+
+  <link name="finger_1_link_1">
+    <visual>
+      <origin rpy="0 0 1.5708" xyz="0 0.05717 0"/> 
+      <geometry>
+        <mesh filename="file:///home/lins/MetaGrasp/grippers/meshes/robotiq_3f/link_1.obj"/>
+      </geometry>
+    </visual>
+  </link>
+
+  <link name="finger_1_link_2">
+    <visual>
+      <origin rpy="0 0 1.5708" xyz="0 0.03810 0.0075"/>
+      <geometry>
+        <mesh filename="file:///home/lins/MetaGrasp/grippers/meshes/robotiq_3f/link_2.obj"/>
+      </geometry>
+    </visual>
+  </link>
+
+  <link name="finger_1_link_3">
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="file:///home/lins/MetaGrasp/grippers/meshes/robotiq_3f/link_3.obj"/>
+      </geometry>
+    </visual>
+  </link> 
+
+  <joint name="finger_1_joint_1" type="revolute">
+    <origin rpy="0 0 -2.0906" xyz="0 0 0"/>
+    <axis xyz="0 0 1"/>
+    <parent link="finger_1_link_0"/>
+    <child link="finger_1_link_1"/>
+    <dynamics damping="1" friction="9"/>
+    <!--limit effort="60" lower="0" upper="1.2217" velocity="-1"/-->
+    <limit effort="60" lower="0" upper="0.90" velocity="-1"/>
+  </joint>
+
+  <joint name="finger_1_joint_2" type="fixed">
+    <parent link="finger_1_link_1"/>
+    <child link="finger_1_link_2"/> 
+    <dynamics dampling="1" friction="0"/>
+    <axis xyz="0 0 1"/>
+    <origin rpy="0 0 0" xyz="0 0.05715 0"/>
+    <!--limit effort="60" lower="0" upper="1.5708" velocity="-1"/-->
+    <limit effort="60" lower="0" upper="0.70" velocity="-1"/>
+  </joint>
+   
+  <joint name="finger_1_joint_3" type="fixed">
+    <parent link="finger_1_link_2"/>
+    <child link="finger_1_link_3"/>
+    <dynamics dampling="1" friction="0"/>
+    <axis xyz="0 0 1"/>
+    <origin rpy="0 0 2.0906" xyz="0 0.039 0"/> 
+    <limit effort="60" lower="-0.6632" upper="1.0471" velocity="-1"/>
+  </joint>
+
+  <!-- Link list-->
+  <!-- Link 0 -->
+  <link name="finger_2_link_0">
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="file:///home/lins/MetaGrasp/grippers/meshes/robotiq_3f/link_0.obj"/>
+      </geometry>
+    </visual>
+  </link>
+
+  <link name="finger_2_link_1">
+    <visual>
+      <origin rpy="0 0 1.5708" xyz="0 0.05717 0"/>
+      <geometry>
+        <mesh filename="file:///home/lins/MetaGrasp/grippers/meshes/robotiq_3f/link_1.obj"/>
+      </geometry>
+    </visual>
+  </link>
+
+  <link name="finger_2_link_2">
+    <visual>
+      <origin rpy="0 0 1.5708" xyz="0 0.03810 0.0075"/>
+      <geometry>
+        <mesh filename="file:///home/lins/MetaGrasp/grippers/meshes/robotiq_3f/link_2.obj"/>
+      </geometry>
+    </visual> 
+  </link>
+
+  <link name="finger_2_link_3"> 
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/> 
+      <geometry>
+        <mesh filename="file:///home/lins/MetaGrasp/grippers/meshes/robotiq_3f/link_3.obj"/>
+      </geometry>
+    </visual>
+  </link> 
+
+  <joint name="finger_2_joint_1" type="revolute">
+    <origin rpy="0 0 -2.0906" xyz="0 0 0"/>
+    <axis xyz="0 0 1"/>
+    <parent link="finger_2_link_0"/>
+    <child link="finger_2_link_1"/>
+    <dynamics damping="1" friction="0"/> 
+    <!--limit effort="60" lower="0" upper="1.5708" velocity="-1"/-->
+    <limit effort="60" lower="0" upper="0.9" velocity="-1"/>
+  </joint>
+
+  <joint name="finger_2_joint_2" type="fixed"> 
+    <parent link="finger_2_link_1"/>
+    <child link="finger_2_link_2"/>
+    <dynamics damping="1" friction="0"/>
+    <axis xyz="0 0 1"/>
+    <origin rpy="0 0 0" xyz="0 0.05715 0"/>
+    <!--limit effort="60" lower="0" upper="1.5708" velocity="-1"/-->
+    <limit effort="60" lower="0" upper="0.7" velocity="-1"/>
+  </joint>
+
+  <joint name="finger_2_joint_3" type="fixed">
+    <parent link="finger_2_link_2"/>
+    <child link="finger_2_link_3"/>
+    <dynamics damping="1" friction="0"/>
+    <axis xyz="0 0 1"/>
+    <origin rpy="0 0 2.0906" xyz="0 0.039 0"/>
+    <limit effort="60" lower="-0.6632" upper="1.0471" velocity="-1"/>
+  </joint>
+
+
+  <link name="finger_middle_link_0">
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="file:///home/lins/MetaGrasp/grippers/meshes/robotiq_3f/link_0.obj"/>
+      </geometry>
+    </visual>
+  </link>
+
+  <link name="finger_middle_link_1"> 
+    <visual>
+      <origin rpy="0 0 1.5708" xyz="0 0.05717 0"/>
+      <geometry>
+        <mesh filename="file:///home/lins/MetaGrasp/grippers/meshes/robotiq_3f/link_1.obj"/>
+      </geometry>
+    </visual>
+  </link>
+
+  <link name="finger_middle_link_2">
+    <visual>
+      <origin rpy="0 0 1.5708" xyz="0 0.03810 0.0075"/>
+      <geometry>
+        <mesh filename="file:///home/lins/MetaGrasp/grippers/meshes/robotiq_3f/link_2.obj"/>
+      </geometry>
+    </visual>
+  </link>
+
+  <link name="finger_middle_link_3">
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="file:///home/lins/MetaGrasp/grippers/meshes/robotiq_3f/link_3.obj"/>
+      </geometry>
+    </visual>
+  </link>
+
+  <joint name="finger_middle_joint_1" type="revolute">
+    <origin rpy="0 0 -2.0906" xyz="0 0 0"/>
+    <axis xyz="0 0 1"/>
+    <parent link="finger_middle_link_0"/>
+    <child link="finger_middle_link_1"/>
+    <dynamics damping="1" friction="0"/>  
+    <!--limit effort="60" lower="0" upper="1.2217" velocity="-1"/-->
+    <limit effort="60" lower="0" upper="0.9" velocity="-1"/>
+  </joint>
+
+  <joint name="finger_middle_joint_2" type="fixed">
+    <parent link="finger_middle_link_1"/>
+    <child link="finger_middle_link_2"/>
+    <dynamics damping="1" friction="0"/> 
+    <axis xyz="0 0 1"/>
+    <origin rpy="0 0 0" xyz="0 0.05715 0"/>
+    <!--limit effort="60" lower="0" upper="1.5708" velocity="-1"/-->
+    <limit effort="60" lower="0" upper="0.7" velocity="-1"/>
+  </joint>
+
+  <joint name="finger_middle_joint_3" type="fixed">
+    <parent link="finger_middle_link_2"/> 
+    <child link="finger_middle_link_3"/>
+    <dynamics damping="1" friction="0"/>
+    <axis xyz="0 0 1"/>
+    <origin rpy="0 0 2.0906" xyz="0 0.039 0"/>
+    <limit effort="60" lower="-0.6632" upper="1.0471" velocity="-1"/>
+  </joint>
+
+  <!-- link list-->
+</robot>
