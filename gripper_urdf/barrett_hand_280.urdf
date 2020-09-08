@@ -1,0 +1,154 @@
+<?xml version="1.0"?>
+<robot name="bh280">
+  <link name="base_link"> 
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="file:///home/lins/MetaGrasp/grippers/meshes/bh280/palm_280.obj"/>
+      </geometry>
+      <material name="Grey">
+        <color rgba="0.75 0.75 0.75 1.0"/>
+      </material>
+    </visual>
+  </link>
+  <link name="finger_32_link">
+    <visual>  
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="file:///home/lins/MetaGrasp/grippers/meshes/bh280/finger.obj"/> 
+      </geometry>
+    </visual>
+  </link>
+
+  <joint name="j32_joint" type="revolute">
+    <parent link="base_link"/>
+    <child link="finger_32_link"/>
+    <origin xyz="0 -0.05 0.0754" rpy="1.5708 0 1.5708"/>
+    <axis xyz="0 0 -1"/>
+    <limit effort="30.0" lower="0.0" upper="2.44" velocity="2.0"/>
+    <dynamics damping="100.0" friction="1.0"/>
+  </joint>
+
+  <link name="finger_tip_3">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="file:///home/lins/MetaGrasp/grippers/meshes/bh280/finger_tip.obj"/>
+      </geometry>
+    </visual>
+  </link>
+
+  <joint name="j33_joint" type="revolute">
+    <parent link="finger_32_link"/>
+    <child link="finger_tip_3"/>
+    <origin xyz="-0.069936 0.003 0" rpy="0 0 -0.785398163"/>
+    <axis xyz="0 0 -1"/>
+    <limit effort="30.0" lower="0.0" upper="0.84" velocity="2.0"/>
+  </joint>
+
+  <!-- finger 1 -->
+  <!-- finger 11 link-->
+  <link name="finger_11_link">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="file:///home/lins/MetaGrasp/grippers/meshes/bh280/knuckle.obj"/>
+      </geometry>
+    </visual>
+  </link>
+
+  <joint name="j11_joint" type="revolute">
+    <parent link="base_link"/>
+    <child link="finger_11_link"/>
+    <origin xyz="0.025 0 0.0415" rpy="0 0 -1.5708"/>
+    <axis xyz="0 0 -1"/>
+    <limit effort="30.0" lower="0.0" upper="3.1415" velocity="2.0"/>
+  </joint>
+   
+  <link name="finger_12_link">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+	<mesh filename="file:///home/lins/MetaGrasp/grippers/meshes/bh280/finger.obj"/>
+      </geometry>
+    </visual>
+  </link>
+
+  <joint name="j12_joint" type="revolute">
+    <parent link="finger_11_link"/>
+    <child link="finger_12_link"/>
+    <origin xyz="-0.05 0.0 0.0339" rpy="1.5708 0 0"/>
+    <axis xyz="0 0 -1"/>
+    <limit effort="30.0" lower="0.0" upper="2.44" velocity="2.0"/>
+  </joint>
+
+  <link name="finger_tip_1">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="file:///home/lins/MetaGrasp/grippers/meshes/bh280/finger_tip.obj"/>
+      </geometry>
+    </visual>
+  </link>
+
+  <joint name="j13_joint" type="revolute">
+    <parent link="finger_12_link"/>
+    <child link="finger_tip_1"/>
+    <origin xyz="-0.069936 0.003 0" rpy="0 0 -0.785398163"/>
+    <axis xyz="0 0 -1"/>
+    <limit effort="30.0" lower="0.0" upper="0.84" velocity="2.0"/>
+  </joint>
+
+  <!-- finger 2-->
+  <!-- finger 21 link-->
+  <link name="finger_21_link">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="file:///home/lins/MetaGrasp/grippers/meshes/bh280/knuckle.obj"/>
+      </geometry>
+    </visual>
+  </link>
+
+  <joint name="j21_joint" type="revolute">
+    <parent link="base_link"/>
+    <child link="finger_21_link"/>
+    <origin xyz="-0.025 0 0.0415" rpy="0 0 -1.5708"/>
+    <axis xyz="0 0 1"/>
+    <limit effort="30.0" lower="0" upper="3.1415" velocity="2.0"/>
+  </joint>
+
+  <link name="finger_22_link"> 
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="file:///home/lins/MetaGrasp/grippers/meshes/bh280/finger.obj"/>
+      </geometry>
+    </visual>
+  </link>
+
+  <joint name="j22_joint" type="revolute">
+    <parent link="finger_21_link"/>
+    <child link="finger_22_link"/>
+    <origin xyz="-0.05 0 0.0339" rpy="1.5708 -8.8281E-17 0"/>
+    <axis xyz="0 0 -1"/>
+    <limit effort="30.0" lower="0.0" upper="2.44" velocity="2.0"/>
+  </joint>
+ 
+  <link name="finger_tip_2">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="file:///home/lins/MetaGrasp/grippers/meshes/bh280/finger_tip.obj"/>
+      </geometry>
+    </visual>
+  </link> 
+
+  <joint name="j23_joint" type="revolute">
+    <parent link="finger_22_link"/>
+    <child link="finger_tip_2"/>
+    <origin xyz="-0.069936 0.003 0" rpy="0 0 -0.785398163"/>
+    <axis xyz="0 0 -1"/>
+    <limit effort="30.0" lower="0.0" upper="0.84" velocity="2.0"/>
+  </joint>
+</robot>
