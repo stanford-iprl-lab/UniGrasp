@@ -29,6 +29,8 @@ parser.add_argument('--max_model_to_keep',type=int,default=400,help='max saved m
 parser.add_argument('--log_dir',default='./logging/',help='folder to save logging info')
 FLAGS = parser.parse_args()
 
+sys.path.insert(0,"../vis_3d")
+from show3d_balls import showpoints
 
 if not os.path.exists(FLAGS.saver_dir):
   os.mkdir(FLAGS.saver_dir)
@@ -36,16 +38,12 @@ if not os.path.exists(FLAGS.saver_dir):
 if not os.path.exists(FLAGS.log_dir):
   os.mkdir(FLAGS.log_dir)
 
-                          
 seed = 42
 np.random.seed(seed)
 tf.set_random_seed(seed)
 TOP_K = 256 
 
-
-#DATA_TOP_DIR = os.path.join(ROOT_DIR,'Data','BlensorResult')
 DATA_TOP_DIR = os.path.join(ROOT_DIR,'Data','Gripper','Data_noR')
-#GRIPPER_TOP_DIR = os.path.join(ROOT_DIR,'Data','Gripper_DB')
 
 in_gripper_tf = tf.placeholder(tf.float32,[None,2048,3],'gripper_in')
 gt_gripper_tf = tf.placeholder(tf.float32,[None,2048,3],'gripper_gt')
@@ -56,9 +54,6 @@ with tf.variable_scope('gripper_encoder'):
 
 with tf.variable_scope('gripper_decoder'):
   out_gripper_tf = pc_decoder(gripper_feat_tf)
-  #reta,retb,retc,retd=nn_distance(out_gripper_tf, gt_gripper_tf)
-  #loss = tf.reduce_sum(reta) + tf.reduce_sum(retc) 
-  #train_op = tf.train.AdamOptimizer(learning_rate=1e-6).minimize(loss)
 
 init_op = tf.group(tf.global_variables_initializer(),
                    tf.local_variables_initializer())
@@ -71,25 +66,11 @@ sess.run(init_op)
 
 SAVER = tf.train.Saver(max_to_keep=1000)
 
-
-def save_model(epoch):
-  save_top_dir = os.path.join('./saved_models',"gripper_v2")
-  ckpt_path = os.path.join(save_top_dir,str(epoch)+'model.ckpt')
-  if epoch == 0:
-    SAVER.save(sess, ckpt_path, write_meta_graph=True)
-  else:
-    SAVER.save(sess, ckpt_path, write_meta_graph=False)
-  print("Saving model at epoch %d to %s" % (epoch, ckpt_path))
-
-
 def restore(epoch):
-  save_top_dir = os.path.join('./saved_models',"gripper_v2")
+  save_top_dir = os.path.join("../saved_models/gripper_representation")
   ckpt_path = os.path.join(save_top_dir,str(epoch)+'model.ckpt')
   print("restoring from %s" % ckpt_path)
   SAVER.restore(sess, ckpt_path)
-  #from tensorflow.python.tools.inspect_checkpoint import print_tensors_in_checkpoint_file
-  #print_tensors_in_checkpoint_file(file_name=ckpt_path, tensor_name="", all_tensors=False, all_tensor_names=True)
-
 
 def rpy_rotmat(rpy):
   rotmat = np.zeros((3,3))
@@ -109,14 +90,8 @@ def rpy_rotmat(rpy):
 
 
 def test(base=0):
-  #num_examples = len(train_val_test_list._train)
-  #print("num training examples %d" % (num_examples))
-  #num_batch = int(num_examples/FLAGS.batch_size)
-  #print("num_training_batch", num_batch)
-  #two_env_i = ['kinova_kg3_0.npy','kinova_kg3_1.npy']
- 
-  DATA_TOP_DIR = '/scr2/MetaGrasp/Data/Gripper/Data_DB/allegro' 
-  in_gripper_file_list = [line for line in os.listdir(DATA_TOP_DIR)]
+  DATA_TOP_DIR = '/scr2/MetaGrasp/Data/Gripper/Data_DB/robotiq_2f' 
+  in_gripper_file_list = [line for line in os.listdir(DATA_TOP_DIR) if line.startswith("robotiq2f")]
   in_gripper_list = []
   for idx, env_i in enumerate(in_gripper_file_list):
       env_dir = os.path.join(DATA_TOP_DIR, env_i)
@@ -125,12 +100,38 @@ def test(base=0):
       #if idx % 20 == 19:
       in_gripper = np.array(in_gripper_list)   
       gt_gripper = in_gripper
+      print("in_gripper",in_gripper.shape)
       out_gripper, gripper_feat = sess.run([out_gripper_tf, gripper_feat_tf],feed_dict={in_gripper_tf: in_gripper, gt_gripper_tf:gt_gripper})
 
       out_dir = '/scr2/MetaGrasp/Data/Gripper/Feat'
       out_dir_file = os.path.join(out_dir,env_i)
       np.save(out_dir_file, gripper_feat)
       in_gripper_list = []
+
+      if 1:
+       for gj in range(1):
+        green = np.zeros((4096,3))
+        green[:2048,0] = 255.0
+        green[2048:,1] = 255.0
+        pred_gripper = np.copy(out_gripper[gj])
+        #tmp_gripper = pred_gripper[:,0]
+        #pred_gripper[:,0] = pred_gripper[:,2]
+        #pred_gripper[:,2] = tmp_gripper
+
+        gt__gripper = np.copy(gt_gripper[gj])
+        #tmp__gripper = gt__gripper[:,0]
+        #gt__gripper[:,0] = gt__gripper[:,2]
+        #gt__gripper[:,2] = tmp__gripper
+
+        gripper_two = np.zeros((4096,3))
+        gripper_two[:2048,:] = pred_gripper
+        gripper_two[2048:,:] = gt__gripper
+        showpoints(gripper_two,c_gt=green,waittime=50,freezerot=False) ### GRB
+        input("gripper")
+
+
+
+
   print(gripper_feat.shape)
   gripper_mean = np.mean(gripper_feat,axis=0)
   gripper_max =  np.max(gripper_feat,axis=0)
@@ -159,30 +160,8 @@ def test(base=0):
   #  middle_dir = os.path.join(recon_dir,'middle'+str(bi)+'.npy')
     #np.save(middle_dir,out_gripper_new[bi])
 
-  if 1:
-       for gj in range(1):
-        green = np.zeros((4096,3))
-        green[:2048,0] = 255.0
-        green[2048:,1] = 255.0
-        pred_gripper = np.copy(out_gripper_new[gj])
-        #tmp_gripper = pred_gripper[:,0]
-        #pred_gripper[:,0] = pred_gripper[:,2]
-        #pred_gripper[:,2] = tmp_gripper
-
-        gt__gripper = np.copy(gt_gripper[gj])
-        #tmp__gripper = gt__gripper[:,0]
-        #gt__gripper[:,0] = gt__gripper[:,2]
-        #gt__gripper[:,2] = tmp__gripper
-
-        gripper_two = np.zeros((4096,3))
-        gripper_two[:2048,:] = pred_gripper
-        gripper_two[2048:,:] = gt__gripper
-        showpoints(gripper_two,c_gt=green,waittime=50,freezerot=False) ### GRB
-        input("gripper")
-
-
 if __name__ == "__main__":
-  save_model(0)
+  #save_model(0)
   for i in range(2248,2250,2):#3000,2):
     restore(i)
     test(i)
