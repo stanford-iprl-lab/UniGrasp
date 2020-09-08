@@ -8,13 +8,9 @@ import os
 import time
 import sys
 import argparse
-import matplotlib.pyplot as plt
-import tflearn
 
 from tf_models.gripper_auto_encoding import pc_encoder as pc_encoder
 from tf_models.gripper_auto_encoding import pc_decoder
-
-import tensorflow.contrib.slim as slim
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 ROOT_DIR = os.path.join(BASE_DIR,'../')
@@ -41,9 +37,6 @@ if not os.path.exists(FLAGS.log_dir):
 seed = 42
 np.random.seed(seed)
 tf.set_random_seed(seed)
-TOP_K = 256 
-
-DATA_TOP_DIR = os.path.join(ROOT_DIR,'Data','Gripper','Data_noR')
 
 in_gripper_tf = tf.placeholder(tf.float32,[None,2048,3],'gripper_in')
 gt_gripper_tf = tf.placeholder(tf.float32,[None,2048,3],'gripper_gt')
@@ -72,77 +65,30 @@ def restore(epoch):
   print("restoring from %s" % ckpt_path)
   SAVER.restore(sess, ckpt_path)
 
-def rpy_rotmat(rpy):
-  rotmat = np.zeros((3,3))
-  roll   = rpy[0]
-  pitch  = rpy[1]
-  yaw    = rpy[2]
-  rotmat[0,0] = np.cos(yaw) * np.cos(pitch)
-  rotmat[0,1] = np.cos(yaw) * np.sin(pitch) * np.sin(roll) - np.sin(yaw) * np.cos(roll)
-  rotmat[0,2] = np.cos(yaw) * np.sin(pitch) * np.cos(roll) + np.sin(yaw) * np.sin(roll)
-  rotmat[1,0] = np.sin(yaw) * np.cos(pitch)
-  rotmat[1,1] = np.sin(yaw) * np.sin(pitch) * np.sin(roll) + np.cos(yaw) * np.cos(roll)
-  rotmat[1,2] = np.sin(yaw) * np.sin(pitch) * np.cos(roll) - np.cos(yaw) * np.sin(roll)
-  rotmat[2,0] = - np.sin(pitch)
-  rotmat[2,1] = np.cos(pitch) * np.sin(roll)
-  rotmat[2,2] = np.cos(pitch) * np.cos(roll)
-  return rotmat
 
-
-def test(base=0):
-  DATA_TOP_DIR = '/scr2/MetaGrasp/Data/Gripper/Data_DB/robotiq_2f' 
-  in_gripper_file_list = [line for line in os.listdir(DATA_TOP_DIR) if line.startswith("robotiq2f")]
+def test(gripper_dir=None,gripper_name="robotiq_3f"):
+  in_gripper_file_list = [line for line in os.listdir(gripper_dir) if line.startswith(gripper_name)]
   in_gripper_list = []
   for idx, env_i in enumerate(in_gripper_file_list):
-      env_dir = os.path.join(DATA_TOP_DIR, env_i)
+      env_dir = os.path.join(gripper_dir, env_i)
       obj_pcs = np.load(env_dir)
       in_gripper_list.append(obj_pcs)
-      #if idx % 20 == 19:
-      in_gripper = np.array(in_gripper_list)   
-      gt_gripper = in_gripper
-      print("in_gripper",in_gripper.shape)
-      out_gripper, gripper_feat = sess.run([out_gripper_tf, gripper_feat_tf],feed_dict={in_gripper_tf: in_gripper, gt_gripper_tf:gt_gripper})
 
-      out_dir = '/scr2/MetaGrasp/Data/Gripper/Feat'
-      out_dir_file = os.path.join(out_dir,env_i)
-      np.save(out_dir_file, gripper_feat)
-      in_gripper_list = []
-
-      if 1:
-       for gj in range(1):
-        green = np.zeros((4096,3))
-        green[:2048,0] = 255.0
-        green[2048:,1] = 255.0
-        pred_gripper = np.copy(out_gripper[gj])
-        #tmp_gripper = pred_gripper[:,0]
-        #pred_gripper[:,0] = pred_gripper[:,2]
-        #pred_gripper[:,2] = tmp_gripper
-
-        gt__gripper = np.copy(gt_gripper[gj])
-        #tmp__gripper = gt__gripper[:,0]
-        #gt__gripper[:,0] = gt__gripper[:,2]
-        #gt__gripper[:,2] = tmp__gripper
-
-        gripper_two = np.zeros((4096,3))
-        gripper_two[:2048,:] = pred_gripper
-        gripper_two[2048:,:] = gt__gripper
-        showpoints(gripper_two,c_gt=green,waittime=50,freezerot=False) ### GRB
-        input("gripper")
-
-
-
+  in_gripper = np.array(in_gripper_list)   
+  gt_gripper = in_gripper
+  out_gripper, gripper_feat = sess.run([out_gripper_tf, gripper_feat_tf],feed_dict={in_gripper_tf: in_gripper, gt_gripper_tf:gt_gripper})
 
   print(gripper_feat.shape)
   gripper_mean = np.mean(gripper_feat,axis=0)
   gripper_max =  np.max(gripper_feat,axis=0)
   gripper_min = np.min(gripper_feat,axis=0)
   print(gripper_mean.shape)
-  recon_dir = DATA_TOP_DIR
 
+  recon_dir = gripper_dir
   mean_feat_file = os.path.join(recon_dir,'mean.npy')
   max_feat_file = os.path.join(recon_dir,'max.npy')
   min_feat_file = os.path.join(recon_dir,'min.npy')
-  
+
   print(mean_feat_file)
   print(max_feat_file)
   print(min_feat_file)
@@ -150,18 +96,27 @@ def test(base=0):
   np.save(max_feat_file,gripper_max)
   np.save(min_feat_file,gripper_min)
 
-  #for bi in range(FLAGS.batch_size):
-  #      env_i = two_env_i[bi]#str(train_val_test_list._train[bt_index[bi]])      
-  #      recon_dir_file = os.path.join(recon_dir,env_i)
-  #      print(recon_dir_file)
-        #np.save(recon_dir_file, out_gripper[bi])
 
-  #for bi in range(FLAGS.batch_size):
-  #  middle_dir = os.path.join(recon_dir,'middle'+str(bi)+'.npy')
-    #np.save(middle_dir,out_gripper_new[bi])
+  if 1:
+       for gj in range(len(in_gripper)):
+        green = np.zeros((4096,3))
+        green[:2048,0] = 255.0
+        green[2048:,1] = 255.0
+        pred_gripper = np.copy(out_gripper[gj])
+        
+        gt__gripper = np.copy(gt_gripper[gj])
+        gripper_two = np.zeros((4096,3))
+        gripper_two[:2048,:] = pred_gripper
+        gripper_two[2048:,:] = gt__gripper
+        showpoints(gripper_two,c_gt=green,waittime=50,freezerot=False) ### GRB
+        #input("gripper")
+
 
 if __name__ == "__main__":
-  #save_model(0)
-  for i in range(2248,2250,2):#3000,2):
-    restore(i)
-    test(i)
+  #### restore the model of auto encoder
+  restore(2248)
+
+  #### specify the folder path of point clouds of the gripper
+  gripper_dir = "../data/grippers/robotiq_3f"
+  gripper_name = "robotiq_3f"
+  test(gripper_dir,gripper_name)
