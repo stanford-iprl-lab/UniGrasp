@@ -28,6 +28,9 @@ The TF operators are included under tf_ops, you need to compile them (run tf_xxx
 cd models; python point_set_selection.py
 ```
 
+## Directly use the pretrained model.
+Here is a google doc describing how to use the UniGrasp. https://docs.google.com/document/d/1qFQYWxoUU8eGv3iasO05HhsSIHLfWJJ-YQSY8UnSReU/edit?usp=sharing.
+
 
 If you think our work is useful, please consider citing use with
 ```
