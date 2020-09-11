@@ -34,6 +34,8 @@ sys.path.insert(0,D3VIS_DIR)
 from show3d_balls import showpoints
 
 ROOT_DIR = os.path.join(BASE_DIR,'../')
+GRIPPER_TOP_DIR = os.path.join(ROOT_DIR,'data/gripper_features/Data_DB')
+DATA_TOP_DIR = os.path.join(ROOT_DIR,'data/objects')
 
 from data_preparing_test import train_val_test_list
 print("train num %d , val num %d , test num %d" % (len(train_val_test_list._train),len(train_val_test_list._val),len(train_val_test_list._test)))
@@ -71,9 +73,7 @@ gt_gripper_tf = tf.placeholder(tf.float32,[None,2048,3],'gripper_gt')
 gripper_feat_tf = tf.placeholder(tf.float32,[None,256 * 3])
 
 
-DATA_TOP_DIR = os.path.join('/juno/u/lins2/MetaGrasp/','Data','BlensorResult_test')
 
-GRIPPER_TOP_DIR = os.path.join(ROOT_DIR,'Data','Gripper_DB')
 
 obj_pc_tf = tf.placeholder(tf.float32,[None,2048,3],'obj_pc')
 
@@ -433,7 +433,7 @@ def copy_stage2_obj():
 
 
 def restore_stage2_v2(epoch):
-  save_top_dir = os.path.join('./saved_models',"point_set_selection_final")
+  save_top_dir = os.path.join('../saved_models',"point_set_selection")
   ckpt_path = os.path.join(save_top_dir,str(epoch)+'model.ckpt')
   variables = slim.get_variables_to_restore()
   variables_to_restore = [v for v in variables if v.name.split('/')[0]=='stage1']
@@ -443,7 +443,7 @@ def restore_stage2_v2(epoch):
  
 
 def restore_stage3_v1(epoch):
-  save_top_dir = os.path.join('./saved_models',"point_set_selection_final")
+  save_top_dir = os.path.join('../saved_models',"point_set_selection")
   ckpt_path = os.path.join(save_top_dir,str(epoch)+'model.ckpt')
   variables = slim.get_variables_to_restore()
   variables_to_restore = [v for v in variables if v.name.split('/')[0]=='stage1']
@@ -452,7 +452,7 @@ def restore_stage3_v1(epoch):
   saver.restore(sess, ckpt_path)
 
 def restore_stage3_v2(epoch):
-  save_top_dir = os.path.join('./saved_models',"point_set_selection_final")
+  save_top_dir = os.path.join('../saved_models',"point_set_selection")
   ckpt_path = os.path.join(save_top_dir,str(epoch)+'model.ckpt')
   variables = slim.get_variables_to_restore()
   variables_to_restore = [v for v in variables if v.name.split('/')[0]=='stage1' or v.name.split('/')[0] == 'stage2']
@@ -465,7 +465,7 @@ def restore_stage3_v2(epoch):
 
 
 def restore_stage3(epoch):
-  save_top_dir = os.path.join('./saved_models',"point_set_selection_final")
+  save_top_dir = os.path.join('../saved_models',"point_set_selection")
   ckpt_path = os.path.join(save_top_dir,str(epoch)+'model.ckpt')
   print("restoring from %s" % ckpt_path)
   SAVER.restore(sess, ckpt_path)
@@ -474,7 +474,7 @@ def restore_stage3(epoch):
 
 
 def save_model_stage3(epoch):
-  save_top_dir = os.path.join('./saved_models',"point_set_selection_single")
+  save_top_dir = os.path.join('../saved_models',"point_set_selection")
   ckpt_path = os.path.join(save_top_dir,str(epoch)+'model.ckpt')
   if epoch == 0:
     SAVER.save(sess, ckpt_path, write_meta_graph=True)
@@ -596,7 +596,7 @@ def test(base=0):
               gt_label[gt_label_filter] = 1
               stage1_gq_label[0:gt_env_num] = gt_label[gt_env_id]
 
-            GRIPPER_TOP_DIR = '/juno/u/lins2/MetaGrasp/Data/Gripper/Data_DB'
+            #GRIPPER_TOP_DIR = '../data/gripper_features/Data_DB'
             #in_gripper_name = 'robotiq_2f'
             #gripper_path_mean = os.path.join(GRIPPER_TOP_DIR,in_gripper_name,'mean.npy')
             #gripper_path_max = os.path.join(GRIPPER_TOP_DIR,in_gripper_name,'max.npy')
@@ -622,7 +622,6 @@ def test(base=0):
             stage1_gq_label_weight = np.zeros((2048,))
             if 1:
                 gt_label_123_dir = os.path.join(DATA_TOP_DIR,env_i)
-                GRIPPER_TOP_DIR = '/juno/u/lins2/MetaGrasp/Data/Gripper/Data_DB'
                 gripper_name = 'None'
                 if int(gripper_id) == 12:
                   gripper_ends_with = '_par_bh282tmp_label_stage1.npy'
