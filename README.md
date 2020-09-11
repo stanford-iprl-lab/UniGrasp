@@ -28,7 +28,7 @@ The TF operators are included under tf_ops, you need to compile them (run tf_xxx
 cd models; python point_set_selection.py
 ```
 
-## Directly use the pretrained model.
+## Grasp Objects With The Pretrained Model.
 1. If you have your own gripper, you will need to generate the point clouds of the gripper under specific joint configurations described in the paper. 
 Here is a github repository I used in UniGrasp. https://github.com/linsats/Python-Parser-for-Robotic-Gripper
 
