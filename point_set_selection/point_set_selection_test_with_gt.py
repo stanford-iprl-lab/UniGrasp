@@ -40,7 +40,7 @@ DATA_TOP_DIR = os.path.join(ROOT_DIR,'data/objects')
 from data_preparing_test import train_val_test_list
 print("train num %d , val num %d , test num %d" % (len(train_val_test_list._train),len(train_val_test_list._val),len(train_val_test_list._test)))
 
-nnn = 2
+nnn = 1
 # Basic model parameters
 parser = argparse.ArgumentParser()
 parser.add_argument('--saver_dir',default='./saved_models/',help='Directory to save the trained model')
@@ -532,7 +532,7 @@ def test(base=0):
       old_id_new_list = []
 
       #gripper_index = np.random.choice(np.array([1,2,3,4,5,11,12,13]),FLAGS.batch_size,replace=True) 
-      gripper_index = np.array([3,5])
+      gripper_index = np.array([11])
       #in_gripper_id = 2
       #input_gripper_index = np.array([5])
       #gripper_index = np.array([11])#np.random.choice(np.array([1,2,3,4,5,7,8,9,11,12,13]),FLAGS.batch_size,replace=True) 
@@ -966,7 +966,7 @@ def test(base=0):
             input("raw") 
      
       # stage3 oldr
-      if 0:
+      if 1:
         gt_corr_label_list = []
   
         for bbi in range(int(FLAGS.batch_size/gripper_size)):
