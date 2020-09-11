@@ -73,8 +73,6 @@ gt_gripper_tf = tf.placeholder(tf.float32,[None,2048,3],'gripper_gt')
 gripper_feat_tf = tf.placeholder(tf.float32,[None,256 * 3])
 
 
-
-
 obj_pc_tf = tf.placeholder(tf.float32,[None,2048,3],'obj_pc')
 
 rand_stage1_tf = tf.placeholder(tf.float32,[None, 2048],'rand_n')
@@ -768,7 +766,6 @@ def test(base=0):
         c_c[pred_c,0] = 0.0# Prediction Red
         c_c[pred_c,1] = 255.0
         showpoints(s_p,c_gt=c_c,waittime=5,freezerot=False) ### GRB
-        input("raw")
 
       # stage2
       if 1:
@@ -847,7 +844,6 @@ def test(base=0):
         gt_two_points_label_w = np.array(gt_two_points_label_w_list)
         gt_two_points_label_w = np.reshape(gt_two_points_label_w,[-1,TOP_K * TOP_K2])
 
-        #print(np.sum(gt_two_points_label))
         out_single_point_top_1024_index_v2, out_two_points_top_index, loss2 = sess.run([out_single_point_top_1024_index_tf, out_two_points_top_index_tf, loss_stage2],feed_dict={gt_two_points_label_w_tf: gt_two_points_label_w, gq_label_tf:stage1_gt_gq, gt_pcn_tf:in_objnor, gripper_feat_tf: in_gripper_feat, obj_pc_tf: in_objenv, gt_two_points_label_tf: gt_two_points_label})
         #out_single_point_top_1024_index_v2, out_two_points_top_index, loss2, _ = sess.run([out_single_point_top_1024_index_tf, out_two_points_top_index_tf, loss_stage2, train_op_stage2],feed_dict={gq_label_tf:stage1_gt_gq, gt_pcn_tf:in_objnor, gripper_feat_tf: in_gripper_feat, obj_pc_tf: in_objenv, gt_two_points_label_tf: gt_two_points_label,gt_two_points_label_w_tf: gt_two_points_label_w})
         train_loss_stage2 += loss2
