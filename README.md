@@ -29,7 +29,14 @@ cd models; python point_set_selection.py
 ```
 
 ## Directly use the pretrained model.
-Here is a google doc describing how to use the UniGrasp. https://docs.google.com/document/d/1qFQYWxoUU8eGv3iasO05HhsSIHLfWJJ-YQSY8UnSReU/edit?usp=sharing.
+1. If you have your own gripper, you will need to generate the point clouds of the gripper under specific joint configurations described in the paper. 
+Here is a github repository I used in UniGrasp. https://github.com/linsats/Python-Parser-for-Robotic-Gripper
+
+2. Generate the gripper features after feeding these point clouds in the gripper auto-encoder model using gripper_feature_extraction.py 
+
+3. Send the object point cloud and the gripper features into the point set selection network.The pretrained model is in http://download.cs.stanford.edu/juno/UniGrasp/pretrained_models/point_set_selection.zip. Download and unzip it under the UniGrasp/saved_models. Then run the code point_set_selection_test.py
+
+4. Solve in the inverse kinematic given the position and orientation of the selected contact points. We use the RBDL, https://github.com/rbdl/rbdl.
 
 
 If you think our work is useful, please consider citing use with
