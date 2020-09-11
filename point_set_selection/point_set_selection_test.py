@@ -1231,13 +1231,5 @@ def test(base=0):
 
 
 if __name__ == "__main__":
-  # Fist point training ends at 223 $$$ 435
-  #for i in range(223,440):
-  #  restore_stage3_v2(i)
-  #  test(i)
-  #test(1)
   restore_stage3(220)
   test(0)
-  #for i in range(2115,2530):
-  #  restore_stage3(i)
-  #  test(2050)
