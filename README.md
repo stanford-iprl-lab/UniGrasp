@@ -10,6 +10,8 @@ multifingered robotic hands. Our model produces over 90% valid contact points in
 93%, 83% and 90% successful grasps in real world experiments for an unseen two-fingered gripper and two unseen multi-fingered
 anthropomorphic robotic hands.
 
+[Project Webpage](https://sites.google.com/view/unigrasp)
+
 ## Get Started
 1.Initialize repository
 ```
@@ -25,7 +27,7 @@ The TF operators are included under tf_ops, you need to compile them (run tf_xxx
 
 3.Run
 ```
-cd models; python point_set_selection.py
+cd point_set_selection; python point_set_selection.py
 ```
 
 ## Generate Contact Points Using Pretrained Model
@@ -37,6 +39,11 @@ Here is a github repository I used in UniGrasp. https://github.com/linsats/Pytho
 3. Send the object point cloud and the gripper features into the point set selection network.The pretrained model is in [point_set_selection.zip](http://download.cs.stanford.edu/juno/UniGrasp/pretrained_models/point_set_selection.zip). Download and unzip it under the UniGrasp/saved_models. Then run the code point_set_selection_test.py
 
 4. Solve in the inverse kinematic given the position and orientation of the selected contact points. We use the RBDL, https://github.com/rbdl/rbdl.
+
+## Dataset
+[train_data.tar.gz](http://download.cs.stanford.edu/juno/UniGrasp/train_data.tar.gz)
+
+[test_data.tar.gz](http://download.cs.stanford.edu/juno/UniGrasp/test_data.tar.gz)
 
 
 If you think our work is useful, please consider citing use with
