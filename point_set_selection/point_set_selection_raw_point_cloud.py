@@ -568,7 +568,7 @@ def test(base,pc_real):
       in_objenv = np.array(in_objenv_list)
       print("in_objenv",in_objenv.shape)
 
-      for _ in range(100):
+      for _ in range(30):
         pred_label, out_single_point_top_1024_index ,out_single_point_top_index = sess.run([pred_label_tf, out_single_point_top_1024_index_tf, out_single_point_top_index_tf],feed_dict={gripper_feat_tf:in_gripper_feat, obj_pc_tf: in_objenv})
 
         if 0:
