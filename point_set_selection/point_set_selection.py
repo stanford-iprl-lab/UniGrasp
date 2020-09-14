@@ -586,11 +586,12 @@ def train(base=0):
           if int(gripper_id) < 10:
             gt_path_endswith = '_par_grasp' + str(gripper_id) + '_new.npz'
             gt_gq_path_dirs = [os.path.join(env_dir,f) for f in os.listdir(env_dir) if f.endswith(gt_path_endswith)]
-            #print("gt_gq_path_dirs",gt_gq_path_dirs[0])
+            #print("gt_gq_path_dirs",gt_gq_path_dirs)
             if len(gt_gq_path_dirs) == 0:
               gt_path_endswith = '_par_grasp' + str(gripper_id) + '.npz'
               gt_gq_path_dirs = [os.path.join(env_dir,f) for f in os.listdir(env_dir) if f.endswith(gt_path_endswith)]
             #print(gt_gq_path_dirs)
+            #print("env_dir",env_dir,"gt_path_endswith",gt_path_endswith)
             gt_gq_path = gt_gq_path_dirs[0]
             gt_gq_label = np.load(gt_gq_path)['par']
             gt_label = np.zeros((2048,))
