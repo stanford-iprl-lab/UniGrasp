@@ -25,7 +25,7 @@ The TF operators are included under tf_ops, you need to compile them (run tf_xxx
 
 3.Run
 ```
-cd models; python point_set_selection.py
+cd point_set_selection; python point_set_selection.py
 ```
 
 ## Generate Contact Points Using Pretrained Model
