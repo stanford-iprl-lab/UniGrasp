@@ -35,12 +35,13 @@ from show3d_balls import showpoints
 
 ROOT_DIR = os.path.join(BASE_DIR,'../')
 GRIPPER_TOP_DIR = os.path.join(ROOT_DIR,'data/gripper_features/Data_DB')
-DATA_TOP_DIR = os.path.join(ROOT_DIR,'data/objects')
+#DATA_TOP_DIR = os.path.join(ROOT_DIR,'data/objects')
+DATA_TOP_DIR = "/juno/downloads/UniGrasp/test_data"
 
 from data_preparing_test import train_val_test_list
 print("train num %d , val num %d , test num %d" % (len(train_val_test_list._train),len(train_val_test_list._val),len(train_val_test_list._test)))
 
-nnn = 2
+nnn = 1
 # Basic model parameters
 parser = argparse.ArgumentParser()
 parser.add_argument('--saver_dir',default='./saved_models/',help='Directory to save the trained model')
@@ -532,7 +533,7 @@ def test(base=0):
       old_id_new_list = []
 
       #gripper_index = np.random.choice(np.array([1,2,3,4,5,11,12,13]),FLAGS.batch_size,replace=True) 
-      gripper_index = np.array([3,5])
+      gripper_index = np.array([11])
       #in_gripper_id = 2
       #input_gripper_index = np.array([5])
       #gripper_index = np.array([11])#np.random.choice(np.array([1,2,3,4,5,7,8,9,11,12,13]),FLAGS.batch_size,replace=True) 
@@ -564,6 +565,7 @@ def test(base=0):
           gripper_id = str(gripper_id)
 
           env_i = str(train_val_test_list._train[bt_index[bbi]])
+          print("env_i",env_i)
           env_dir = os.path.join(DATA_TOP_DIR, env_i)
           obj_path = [os.path.join(env_dir,f) for f in os.listdir(env_dir) if f.endswith('_pcn_new_normal.npz.npy')][0]
           obj_pcs = np.load(obj_path)
@@ -579,7 +581,7 @@ def test(base=0):
           stage1_gq_label_weight = np.ones((2048,))
 
           if int(gripper_id) < 11:
-            gt_path_endswith = '_par_grasp' + str(gripper_id) + '.npz'#'_new.npz'
+            gt_path_endswith = '_par_grasp' + str(gripper_id) + '_new.npz'
             gt_gq_path_dirs = [os.path.join(env_dir,f) for f in os.listdir(env_dir) if f.endswith(gt_path_endswith)]
             gt_gq_path = gt_gq_path_dirs[0]
             gt_gq_label = np.load(gt_gq_path)['par']
@@ -766,6 +768,7 @@ def test(base=0):
         c_c[pred_c,0] = 0.0# Prediction Red
         c_c[pred_c,1] = 255.0
         showpoints(s_p,c_gt=c_c,waittime=5,freezerot=False) ### GRB
+        #input("raw")
 
       # stage2
       if 1:
@@ -780,7 +783,7 @@ def test(base=0):
             env_dir = os.path.join(DATA_TOP_DIR, env_i)
             tmp_label = np.zeros((2048,2048))      
             if gripper_id < 11:
-              gt_path_endswith = '_par_grasp'+ str(gripper_id) + '.npz'#'_new.npz'
+              gt_path_endswith = '_par_grasp'+ str(gripper_id) + '_new.npz'
               gt_gq_path_dirs = [os.path.join(env_dir,f) for f in os.listdir(env_dir) if f.endswith(gt_path_endswith)]
               gt_gq_path = gt_gq_path_dirs[0]
               gt_gq_label = np.load(gt_gq_path)['par']
@@ -961,9 +964,10 @@ def test(base=0):
             c_pred[top1_two_points_index_2,0] = 0.0
             c_pred[top1_two_points_index_2,2] = 255.0
             showpoints(s_p,c_gt=c_pred,waittime=20,ballradius=4,freezerot=False) ## GRB
-        
+            #input("raw") 
+     
       # stage3 oldr
-      if 0:
+      if 1:
         gt_corr_label_list = []
   
         for bbi in range(int(FLAGS.batch_size/gripper_size)):
@@ -1001,19 +1005,6 @@ def test(base=0):
                   tmp_label[gt_3f_label[:,2].astype(np.int32),gt_3f_label[:,0].astype(np.int32),gt_3f_label[:,1].astype(np.int32)] = 1 
                   tmp_label[gt_3f_label[:,2].astype(np.int32),gt_3f_label[:,1].astype(np.int32),gt_3f_label[:,0].astype(np.int32)] = 1 
 
-                  if int(gripper_id) == 12:
-                    gt_3fgripper_path_dirs = [os.path.join(env_dir,f) for f in os.listdir(env_dir) if f.endswith('_robotiq_3f_fullest_v3.npy')]
-                    gt_robotiq3f_path = gt_3fgripper_path_dirs[0]
-                    gt_3f_label_v2 = np.load(gt_robotiq3f_path)
-                
-                    tmp_label[gt_3f_label_v2[:,0].astype(np.int32),gt_3f_label_v2[:,1].astype(np.int32),gt_3f_label_v2[:,2].astype(np.int32)] = 1 
-                    tmp_label[gt_3f_label_v2[:,0].astype(np.int32),gt_3f_label_v2[:,2].astype(np.int32),gt_3f_label_v2[:,1].astype(np.int32)] = 1 
-                    tmp_label[gt_3f_label_v2[:,1].astype(np.int32),gt_3f_label_v2[:,0].astype(np.int32),gt_3f_label_v2[:,2].astype(np.int32)] = 1 
-                    tmp_label[gt_3f_label_v2[:,1].astype(np.int32),gt_3f_label_v2[:,2].astype(np.int32),gt_3f_label_v2[:,0].astype(np.int32)] = 1 
-                    tmp_label[gt_3f_label_v2[:,2].astype(np.int32),gt_3f_label_v2[:,0].astype(np.int32),gt_3f_label_v2[:,1].astype(np.int32)] = 1 
-                    tmp_label[gt_3f_label_v2[:,2].astype(np.int32),gt_3f_label_v2[:,1].astype(np.int32),gt_3f_label_v2[:,0].astype(np.int32)] = 1 
-
-                   
                   out_single_index_stage2 = [(idx, gt_env_id_list[bi][l]) for idx, l in enumerate(out_single_point_top_1024_index[bi]) if l < gt_env_num_list[bi]]
                   out_single_index_stage2_tmp = np.array(out_single_index_stage2)
                   
