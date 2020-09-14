@@ -36,8 +36,8 @@ ROOT_DIR = os.path.join(BASE_DIR,'../')
 GRIPPER_TOP_DIR = os.path.join(ROOT_DIR,'data/gripper_features/Data_DB')
 DATA_TOP_DIR = os.path.join(ROOT_DIR,'data/real_world')
 
-from data_preparing_test import train_val_test_list
-print("train num %d , val num %d , test num %d" % (len(train_val_test_list._train),len(train_val_test_list._val),len(train_val_test_list._test)))
+#from data_preparing_test import train_val_test_list
+#print("train num %d , val num %d , test num %d" % (len(train_val_test_list._train),len(train_val_test_list._val),len(train_val_test_list._test)))
 
 nnn = 1
 # Basic model parameters
