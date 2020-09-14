@@ -38,6 +38,10 @@ Here is a github repository I used in UniGrasp. https://github.com/linsats/Pytho
 
 4. Solve in the inverse kinematic given the position and orientation of the selected contact points. We use the RBDL, https://github.com/rbdl/rbdl.
 
+## Dataset
+[train_data.tar.gz](http://download.cs.stanford.edu/juno/UniGrasp/train_data.tar.gz)
+[test_data.tar.gz](http://download.cs.stanford.edu/juno/UniGrasp/test_data.tar.gz)
+
 
 If you think our work is useful, please consider citing use with
 ```
