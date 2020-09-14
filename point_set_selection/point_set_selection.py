@@ -36,16 +36,15 @@ ROOT_DIR = os.path.join(BASE_DIR,'../')
 D3VIS_DIR = os.path.join(ROOT_DIR,'vis_3d')
 sys.path.insert(0,D3VIS_DIR)
 
+DATA_TOP_DIR = os.path.join(ROOT_DIR,'data/train_data')
+GRIPPER_TOP_DIR = os.path.join(ROOT_DIR,'data/gripper_features/Data_DB')
+
+from show3d_balls import showpoints
+
 ROOT_DIR = os.path.join(BASE_DIR,'../')
 
 from data_preparing import train_val_test_list
 print("train num %d , val num %d , test num %d" % (len(train_val_test_list._train),len(train_val_test_list._val),len(train_val_test_list._test)))
-
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-ROOT_DIR = os.path.join(BASE_DIR,'../')
-D3VIS_DIR = os.path.join(ROOT_DIR,'vis_3d')
-sys.path.insert(0,D3VIS_DIR)
-from show3d_balls import showpoints
 
 nnn = 3
 # Basic model parameters
@@ -80,9 +79,6 @@ gt_gripper_tf = tf.placeholder(tf.float32,[None,2048,3],'gripper_gt')
 
 gripper_feat_tf = tf.placeholder(tf.float32,[None,256 * 3])
 
-
-DATA_TOP_DIR = "../data/objects"
-GRIPPER_TOP_DIR = "../data/grippers/robotiq_3f"
 
 obj_pc_tf = tf.placeholder(tf.float32,[None,2048,3],'obj_pc')
 
@@ -125,6 +121,8 @@ with tf.variable_scope('stage1'):
   loss_ListNet_Loss_s1 = -tf.reduce_mean( tf.cast(gq_label_tf,dtype=tf.float32) * gq_label_weight_tf * tf.log( tf.exp(out_single_point_score_tf_) / denominator_stage1 ) )
 
   loss_stage1_ce =tf.reduce_mean( tf.nn.sparse_softmax_cross_entropy_with_logits(labels=tf.cast(gq_label_tf,dtype=tf.int32),logits=gq_prediction))
+#  loss_stage1 = loss_ListNet_Loss_s1 
+#  loss_stage1 += loss_stage1_ce 
   loss_stage1 = loss_stage1_ce #+ loss_gri
   train_op_stage1 = tf.train.AdamOptimizer(learning_rate=5e-5).minimize(loss_stage1)
 
@@ -441,7 +439,7 @@ def copy_stage2_obj():
 
 
 def restore_stage2_v2(epoch):
-  save_top_dir = os.path.join('../saved_models',"point_set_selection_final")
+  save_top_dir = os.path.join('../saved_models',"point_set_selection")
   ckpt_path = os.path.join(save_top_dir,str(epoch)+'model.ckpt')
   variables = slim.get_variables_to_restore()
   variables_to_restore = [v for v in variables if v.name.split('/')[0]=='stage1']
@@ -451,7 +449,7 @@ def restore_stage2_v2(epoch):
  
 
 def restore_stage3_v1(epoch):
-  save_top_dir = os.path.join('../saved_models',"point_set_selection_final")
+  save_top_dir = os.path.join('../saved_models',"point_set_selection")
   ckpt_path = os.path.join(save_top_dir,str(epoch)+'model.ckpt')
   variables = slim.get_variables_to_restore()
   variables_to_restore = [v for v in variables if v.name.split('/')[0]=='stage1']
@@ -460,23 +458,28 @@ def restore_stage3_v1(epoch):
   saver.restore(sess, ckpt_path)
 
 def restore_stage3_v2(epoch):
-  save_top_dir = os.path.join('../saved_models',"point_set_selection_final")
+  save_top_dir = os.path.join('../saved_models',"point_set_selection")
   ckpt_path = os.path.join(save_top_dir,str(epoch)+'model.ckpt')
   variables = slim.get_variables_to_restore()
   variables_to_restore = [v for v in variables if v.name.split('/')[0]=='stage1' or v.name.split('/')[0] == 'stage2']
   saver = tf.train.Saver(variables_to_restore)
   print("restoring from %s" % ckpt_path)
   saver.restore(sess, ckpt_path)
-
+  #SAVER.restore(sess, ckpt_path)
+  #from tensorflow.python.tools.inspect_checkpoint import print_tensors_in_checkpoint_file
+  #print_tensors_in_checkpoint_file(file_name=ckpt_path, tensor_name="", all_tensors=False, all_tensor_names=True)
 
 def restore_stage3(epoch):
-  save_top_dir = os.path.join('../saved_models',"point_set_selection_single_v2")
+  save_top_dir = os.path.join('../saved_models',"point_set_selection")
   ckpt_path = os.path.join(save_top_dir,str(epoch)+'model.ckpt')
   print("restoring from %s" % ckpt_path)
   SAVER.restore(sess, ckpt_path)
+  #from tensorflow.python.tools.inspect_checkpoint import print_tensors_in_checkpoint_file
+  #print_tensors_in_checkpoint_file(file_name=ckpt_path, tensor_name="", all_tensors=False, all_tensor_names=True)
+
 
 def save_model_stage3(epoch):
-  save_top_dir = os.path.join('../saved_models',"point_set_selection_single_v2")
+  save_top_dir = os.path.join('../saved_models',"point_set_selection")
   ckpt_path = os.path.join(save_top_dir,str(epoch)+'model.ckpt')
   if epoch == 0:
     SAVER.save(sess, ckpt_path, write_meta_graph=True)
@@ -534,7 +537,7 @@ def train(base=0):
 
       old_id_new_list = []
 
-      gripper_index = np.random.choice(np.array([1,2,3,4,5]),gripper_size,replace=False) 
+      gripper_index = np.random.choice(np.array([1,2,3,4,5,11]),gripper_size,replace=False) 
       #print(gripper_index)
       #gripper_index = np.array([1,2,3,4,5])
       #gripper_index = np.array([4])
@@ -601,7 +604,6 @@ def train(base=0):
               gt_label[gt_label_filter] = 1
               stage1_gq_label[0:gt_env_num] = gt_label[gt_env_id]
 
-            #GRIPPER_TOP_DIR = '/juno/u/lins2/MetaGrasp/Data/Gripper/Data_DB'
             gripper_path_mean = os.path.join(GRIPPER_TOP_DIR,'G'+str(gripper_id),'mean.npy')
             gripper_path_max = os.path.join(GRIPPER_TOP_DIR,'G'+str(gripper_id),'max.npy')
             gripper_path_min = os.path.join(GRIPPER_TOP_DIR,'G'+str(gripper_id),'min.npy')
@@ -618,7 +620,6 @@ def train(base=0):
             stage1_gq_label_weight = np.zeros((2048,))
             if 1:
                 gt_label_123_dir = os.path.join(DATA_TOP_DIR,env_i)
-                #GRIPPER_TOP_DIR = '/juno/u/lins2/MetaGrasp/Data/Gripper/Data_DB'
                 gripper_name = 'None'
                 if int(gripper_id) == 12:
                   gripper_ends_with = '_par_bh282tmp_label_stage1.npy'
@@ -714,8 +715,8 @@ def train(base=0):
       stage1_gt_gq = np.array(gt_gq_list)
       stage1_gt_gq_weight = np.array(gt_s1_weight_list)
 
-      #lossnor, _ , _,loss_value, pred_label, out_single_point_top_1024_index ,out_single_point_top_index = sess.run([loss_nor, train_op_nor, train_op_stage1, loss_stage1, pred_label_tf, out_single_point_top_1024_index_tf, out_single_point_top_index_tf],feed_dict={gripper_feat_tf: in_gripper_feat, gq_label_weight_tf: stage1_gt_gq_weight, gt_pcn_tf:in_objnor, obj_pc_tf: in_objenv, gq_label_tf:stage1_gt_gq})
-      lossnor, loss_value, pred_label, out_single_point_top_1024_index ,out_single_point_top_index = sess.run([loss_nor, loss_stage1, pred_label_tf, out_single_point_top_1024_index_tf, out_single_point_top_index_tf],feed_dict={gq_label_weight_tf: stage1_gt_gq_weight, gt_pcn_tf:in_objnor,  gripper_feat_tf:in_gripper_feat, obj_pc_tf: in_objenv, gq_label_tf:stage1_gt_gq})
+      lossnor, _ , _,loss_value, pred_label, out_single_point_top_1024_index ,out_single_point_top_index = sess.run([loss_nor, train_op_nor, train_op_stage1, loss_stage1, pred_label_tf, out_single_point_top_1024_index_tf, out_single_point_top_index_tf],feed_dict={gripper_feat_tf: in_gripper_feat, gq_label_weight_tf: stage1_gt_gq_weight, gt_pcn_tf:in_objnor, obj_pc_tf: in_objenv, gq_label_tf:stage1_gt_gq})
+      #lossnor, loss_value, pred_label, out_single_point_top_1024_index ,out_single_point_top_index = sess.run([loss_nor, loss_stage1, pred_label_tf, out_single_point_top_1024_index_tf, out_single_point_top_index_tf],feed_dict={gq_label_weight_tf: stage1_gt_gq_weight, gt_pcn_tf:in_objnor,  gripper_feat_tf:in_gripper_feat, obj_pc_tf: in_objenv, gq_label_tf:stage1_gt_gq})
       train_loss_nor += lossnor
 
       for gj in range(FLAGS.batch_size): 
@@ -742,7 +743,7 @@ def train(base=0):
         showpoints(s_p,c_gt=c_c,waittime=5,freezerot=False) ### GRB
 
       # stage2
-      if 1:
+      if 0:
         gt_two_points_label_list = []
         gt_two_points_label_w_list = []
         for bbi in range(int(FLAGS.batch_size/gripper_size)):
@@ -764,15 +765,12 @@ def train(base=0):
               gt_label = np.zeros((TOP_K, 1024))
               if len(gt_gq_label) > 0:
                 out_single_index_stage2 = [(idx, old_id_new_list[bi][l]) for idx, l in enumerate(out_single_point_top_1024_index[bi])]
-                #out_single_index_stage2 = [(idx, gt_env_id_list[bi][l]) for idx, l in enumerate(out_single_point_top_1024_index[bi]) if l < gt_env_num_list[bi]]
                 out_single_index_stage2_tmp = np.array(out_single_index_stage2)
                 tmp_label = np.zeros((2048,2048))
                 tmp_label[np.copy(gt_gq_label[:,5,1]).astype(np.int32),np.copy(gt_gq_label[:,5,2]).astype(np.int32)] = 1
                 tmp_label[np.copy(gt_gq_label[:,5,2]).astype(np.int32),np.copy(gt_gq_label[:,5,1]).astype(np.int32)] = 1
                 for k in range(TOP_K):
-                  #if out_single_point_top_index[bi][k] < gt_env_num_list[bi]:# and stage1_gt_gq[bi][out_single_point_top_index[bi][k]] > 0:
                     gt_label[k][out_single_index_stage2_tmp[:,0]] = tmp_label[old_id_new_list[bi][out_single_point_top_index[bi][k]],out_single_index_stage2_tmp[:,1]]
-              #print(np.sum(gt_label),np.sum(tmp_label))
               gt_two_points_label_list.append(gt_label)
               gt_label_w = np.ones((TOP_K,TOP_K2))
               gt_two_points_label_w_list.append(gt_label_w)
@@ -906,7 +904,7 @@ def train(base=0):
             gripper_id = gripper_index[ggi]
             gj = bj * gripper_size + ggi
             env_i = str(train_val_test_list._train[bt_index[bj]])
-            env_dir = os.path.join('/scr1/MetaGrasp/Data/BlensorResult', env_i)
+            env_dir = os.path.join(DATA_TOP_DIR, env_i)
             gripper_path = GRIPPER_TOP_DIR
 
             if gripper_id > 10:
@@ -921,7 +919,7 @@ def train(base=0):
                  gripper_ends_with = '_kinova_3f_fullest_v3.npy'
                  gripper_name = 'kinova_kg3'
 
-            env_save_dir = os.path.join('/scr1/MetaGrasp/Data/BlensorResult',env_i) 
+            env_save_dir = os.path.join(DATA_TOP_DIR,env_i) 
             s1_top1024_dir = os.path.join(env_save_dir,str(gripper_id)+'_s1_top1024.npy')     
             out_single_point_top_1024_index_list.append(np.load(s1_top1024_dir))           
 
@@ -938,19 +936,11 @@ def train(base=0):
         out_single_point_top_index_s3 = np.array(out_single_point_top_index_list).astype(np.int32)
         out_two_points_top_index_s3 = np.array(out_two_points_top_index_list).astype(np.int32)
 
-#        print(np.sum(out_single_point_top_1024_index_s3 == out_single_point_top_1024_index))
-#        print(np.sum(out_two_points_top_index_s3 == out_two_points_top_index)) 
-                 
-        #assert np.all(out_single_point_top_1024_index_s3 == out_single_point_top_1024_index)
-        #assert np.all(out_two_points_top_index_s3 == out_two_points_top_index) 
-
         gt_corr_label = np.array(gt_corr_label_list).astype(np.int32)
         gt_corr_label = np.reshape(gt_corr_label,[-1,TOP_K * TOP_K2])
 
         final_mask, final_mask_gt, out_two_points_top_index_v3, _, out_corr_top_index_stage3, loss3 = sess.run([final_mask_tf, final_mask_gt_tf, out_two_points_top_index_tf, train_op_stage3, out_corr_top_index_stage3_tf, loss_stage3],feed_dict={gt_pcn_tf: in_objnor, gq_label_tf:stage1_gt_gq, gripper_feat_tf: in_gripper_feat, obj_pc_tf: in_objenv, gt_corr_label_stage3_tf: gt_corr_label, out_single_point_top_1024_index_s3_tf: out_single_point_top_1024_index_s3,  out_single_point_top_index_s3_tf: out_single_point_top_index_s3,out_two_points_top_index_s3_tf:out_two_points_top_index_s3})
         #train_loss_stage3 += loss3
-
-        #print(env_i, np.sum(final_mask_gt[0])/(np.sum(final_mask[0])+1.0),np.sum(final_mask[0]), np.sum(final_mask_gt[0]),np.sum(gt_corr_label[0]))
         if 1:
          for gj in range(FLAGS.batch_size):
           third_point_set_label = out_corr_top_index_stage3[gj]
@@ -1081,19 +1071,6 @@ def train(base=0):
                   tmp_label[gt_3f_label[:,2].astype(np.int32),gt_3f_label[:,0].astype(np.int32),gt_3f_label[:,1].astype(np.int32)] = 1 
                   tmp_label[gt_3f_label[:,2].astype(np.int32),gt_3f_label[:,1].astype(np.int32),gt_3f_label[:,0].astype(np.int32)] = 1 
 
-                  if int(gripper_id) == 12:
-                    gt_3fgripper_path_dirs = [os.path.join(env_dir,f) for f in os.listdir(env_dir) if f.endswith('_robotiq_3f_fullest_v3.npy')]
-                    gt_robotiq3f_path = gt_3fgripper_path_dirs[0]
-                    gt_3f_label_v2 = np.load(gt_robotiq3f_path)
-                
-                    tmp_label[gt_3f_label_v2[:,0].astype(np.int32),gt_3f_label_v2[:,1].astype(np.int32),gt_3f_label_v2[:,2].astype(np.int32)] = 1 
-                    tmp_label[gt_3f_label_v2[:,0].astype(np.int32),gt_3f_label_v2[:,2].astype(np.int32),gt_3f_label_v2[:,1].astype(np.int32)] = 1 
-                    tmp_label[gt_3f_label_v2[:,1].astype(np.int32),gt_3f_label_v2[:,0].astype(np.int32),gt_3f_label_v2[:,2].astype(np.int32)] = 1 
-                    tmp_label[gt_3f_label_v2[:,1].astype(np.int32),gt_3f_label_v2[:,2].astype(np.int32),gt_3f_label_v2[:,0].astype(np.int32)] = 1 
-                    tmp_label[gt_3f_label_v2[:,2].astype(np.int32),gt_3f_label_v2[:,0].astype(np.int32),gt_3f_label_v2[:,1].astype(np.int32)] = 1 
-                    tmp_label[gt_3f_label_v2[:,2].astype(np.int32),gt_3f_label_v2[:,1].astype(np.int32),gt_3f_label_v2[:,0].astype(np.int32)] = 1 
-
-                   
                   out_single_index_stage2 = [(idx, gt_env_id_list[bi][l]) for idx, l in enumerate(out_single_point_top_1024_index[bi]) if l < gt_env_num_list[bi]]
                   out_single_index_stage2_tmp = np.array(out_single_index_stage2)
                   
@@ -1119,7 +1096,7 @@ def train(base=0):
             bi = bbi * gripper_size + ggi
             env_i = str(train_val_test_list._train[bt_index[bbi]])
     
-            env_save_dir = os.path.join('/scr1/MetaGrasp/Data/BlensorResult',env_i)
+            env_save_dir = os.path.join(DATA_TOP_DIR,env_i)
             if not os.path.exists(env_save_dir):
               os.makedirs(env_save_dir)
             s1_top1024_dir = os.path.join(env_save_dir,str(gripper_id)+'_s1_top1024.npy')     
@@ -1132,8 +1109,12 @@ def train(base=0):
             np.save(s3_gt_dir,gt_corr_label[gj])
             #print(s3_gt_dir)
 
+        #out_corr_top_index_stage3, loss3 = sess.run([out_corr_top_index_stage3_tf, loss_stage3],feed_dict={gripper_feat_tf: in_gripper_feat, obj_pc_tf: in_objenv, gt_corr_label_stage3_tf: gt_corr_label})
         final_mask, final_mask_gt, out_two_points_top_index_v3, _, out_corr_top_index_stage3, loss3 = sess.run([final_mask_tf, final_mask_gt_tf, out_two_points_top_index_tf, train_op_stage3, out_corr_top_index_stage3_tf, loss_stage3],feed_dict={gt_pcn_tf: in_objnor, gq_label_tf:stage1_gt_gq, gripper_feat_tf: in_gripper_feat, obj_pc_tf: in_objenv, gt_corr_label_stage3_tf: gt_corr_label})
+        #train_loss_stage3 += loss3
 
+
+        #print(env_i, np.sum(final_mask_gt[0])/(np.sum(final_mask[0])+1.0),np.sum(final_mask[0]), np.sum(final_mask_gt[0]),np.sum(gt_corr_label[0]))
         step4=time.time()
         
         if 1:
@@ -1172,6 +1153,9 @@ def train(base=0):
           stage3_acc_top1 += (np.sum(gt_corr_label[gj][third_point_set_label[0:TOP_K2]]) / float(TOP_K2))
           gt_stage3_acc_top1 += (np.sum(gt_corr_label[gj][gt_three_points_label[0:TOP_K2]]) / float(TOP_K2))
  
+        #print(top1_f1_index_1,top1_f2_index_2,top1_f3_index_3,tmp_label[top1_f1_index_1,top1_f2_index_2,top1_f3_index_3],np.sum(tmp_label[top1_f1_index_1,top1_f2_index_2,:]))
+        #print("stage1_acc_top1", stage3_acc_top1/(batch_id+1))
+        #print(gt_top1_f1_index_1,gt_top1_f2_index_2,gt_top1_f3_index_3)
 
          for gj in range(FLAGS.batch_size):
           third_point_set_label = out_corr_top_index_stage3[gj]
@@ -1247,4 +1231,5 @@ def train(base=0):
       save_model_stage3(epoch+1+base)
 
 if __name__ == "__main__":
-  train()
+  # Fist point training ends at 222
+  train(0)
