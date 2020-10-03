@@ -1,0 +1,8 @@
+pgripper = ParallelJawGripper(jaw_width=0.01,jaw_height=0.015,jaw_depth=0.01,grasp_max_width=0.06,grasp_min_width=0.0005,base_height=0.04,base_depth=0.02,base_width=0.08) # jaw too short
+pgripper = ParallelJawGripper(jaw_width=0.01,jaw_height=0.055,jaw_depth=0.01,grasp_max_width=0.06,grasp_min_width=0.0005,base_height=0.04,base_depth=0.02,base_width=0.14) # base too long
+pgripper = ParallelJawGripper(jaw_width=0.01,jaw_height=0.055,jaw_depth=0.01,grasp_max_width=0.03,grasp_min_width=0.0005,base_height=0.04,base_depth=0.02,base_width=0.08) # can not open too much
+pgripper = ParallelJawGripper(jaw_width=0.01,jaw_height=0.055,jaw_depth=0.01,grasp_max_width=0.06,grasp_min_width=0.0005,base_height=0.04,base_depth=0.02,base_width=0.08)
+pgripper = ParallelJawGripper(jaw_width=0.01,jaw_height=0.055,jaw_depth=0.01,grasp_max_width=0.06,grasp_min_width=0.02,base_height=0.04,base_depth=0.02,base_width=0.08) # can not close too much
+pgripper = ParallelJawGripper(jaw_width=0.011,jaw_height=0.060,jaw_depth=0.014,grasp_max_width=0.083,grasp_min_width=0.0005,base_height=0.054,base_depth=0.054,base_width=0.102) # saywer
+pgripper = ParallelJawGripper(jaw_width=0.027,jaw_height=0.047,jaw_depth=0.021,grasp_max_width=0.08,grasp_min_width=0.0005,base_height=0.08,base_depth=0.036,base_width=0.22) # panda
+pgripper = ParallelJawGripper(jaw_width=0.022,jaw_height=0.069,jaw_depth=0.022,grasp_max_width=0.10,grasp_min_width=0.0005,base_height=0.08,base_depth=0.12,base_width=0.10)
