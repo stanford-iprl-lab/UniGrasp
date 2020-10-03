@@ -20,7 +20,7 @@ git clone https://github.com/stanford-iprl-lab/UniGrasp.git
 
 2.Compile pointnet++
 ```
-cd models/poinetnet4
+cd point_set_selection/pointnet4/
 ```
 
 The TF operators are included under tf_ops, you need to compile them (run tf_xxx_compile.sh under each ops subfolder).
