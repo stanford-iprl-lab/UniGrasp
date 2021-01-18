@@ -30,7 +30,6 @@ sys.path.append(BASE_DIR)
 
 from geolib.objfile import OBJ
 from geolib.cuboid import Cuboid
-from geolib.cone import Cone
 from math_utils import quaternionProduct,camRotQuaternion,camPosToQuaternion,obj_centened_camera_pos,quaternion_matrix,tran_rot
 
 np.set_printoptions(precision=4,suppress=True,linewidth=300)
@@ -232,10 +231,6 @@ if __name__ == "__main__":
     pcn = np.vstack([tmp.pcn[contacts1[idx],3:],tmp.pcn[contacts2[idx],3:],tmp.pcn[contacts3[idx],3:]])
     if robotiq_3f_pinch_grasp_checker(tmp.pcn[contacts1[idx],:3],tmp.pcn[contacts2[idx],:3],tmp.pcn[contacts3[idx],:3],tmp.pcn[contacts1[idx],3:],tmp.pcn[contacts2[idx],3:],tmp.pcn[contacts3[idx],3:]):
       initial_frame, tip_order = robotiq_3f_initial_frame(tmp.pcn[contacts1[idx],:3],tmp.pcn[contacts2[idx],:3],tmp.pcn[contacts3[idx],:3],tmp.pcn[contacts1[idx],3:],tmp.pcn[contacts2[idx],3:],tmp.pcn[contacts3[idx],3:])
-      #  plot_pc_with_normal(pc,pcn)
-      #  plot_pc(tmp.pcn[:,0:3])
-      #  plot_pc(tmp.grasp_xyz,color='b')
-      #  mayalab.show()
       if initial_frame is not None: 
         count = count + 1
  
